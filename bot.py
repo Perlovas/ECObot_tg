@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from telebot.types import ReplyKeyboardRemove, ReplyKeyboardMarkup, KeyboardButton
 
-bot = telebot.TeleBot('BOTS_TOKEN')
+bot = telebot.TeleBot('6895022639:AAEZXb0NKvL2nhKr_16gL5o63zBodakDm_Y')
 
 @bot.message_handler(commands=['start', 'help'])
 def handle_start(message):
@@ -840,17 +840,18 @@ def plot_kpv(max_production_A_1, max_production_B_1, max_production_A_2, max_pro
 
     # Построение графика с точками
     plt.figure(figsize=(8, 6))
-    plt.scatter([a_x, b_x, c_x], [a_y, b_y, c_y], color='red', label='Точки')
+    plt.scatter([a_y, b_y, c_y], [a_x, b_x, c_x], color='red', label='Точки')
 
     # Проводим отрезки через точки
-    plt.plot([b_x, c_x], [b_y, c_y], color='green', linestyle='--', label='Производитель 1')
-    plt.plot([a_x, b_x], [a_y, b_y], color='blue', linestyle='--', label='Производитель 2')
+    plt.plot([a_y, b_y], [a_x, b_x], color='blue', linestyle='--', label='Производитель 1')
+    plt.plot([b_y, c_y], [b_x, c_x], color='green', linestyle='--', label='Производитель 2')
+    
     
 
     # Добавление названий точек
-    plt.text(a_x, a_y, 'C', fontsize=12, ha='right', va='bottom')
-    plt.text(b_x, b_y, 'B', fontsize=12, ha='left', va='top')
-    plt.text(c_x, c_y, 'A', fontsize=12, ha='right', va='top')
+    plt.text(a_y, a_x, 'A', fontsize=12, ha='right', va='bottom')
+    plt.text(b_y, b_x, 'B', fontsize=12, ha='left', va='top')
+    plt.text(c_y, c_x, 'C', fontsize=12, ha='right', va='top')
 
     # Настройки графика
     plt.title('Общая КПВ')
