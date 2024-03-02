@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from telebot.types import ReplyKeyboardRemove, ReplyKeyboardMarkup, KeyboardButton
 
-bot = telebot.TeleBot('BOTS_TOKEN')
+bot = telebot.TeleBot('6895022639:AAEZXb0NKvL2nhKr_16gL5o63zBodakDm_Y')
 
 @bot.message_handler(commands=['start', 'help'])
 def handle_start(message):
@@ -29,21 +29,6 @@ Args:
     # Отправляем клавиатуру с сообщением
     bot.send_message(message.chat.id, "Выберите опцию:", reply_markup=keyboard)
 
-@bot.message_handler(content_types=['photo'])
-def handle_photo(message):
-    """
-    Обработчик для получения и обработки фотографии.
-
-    Args:
-    - message (types.Message): Объект сообщения пользователя.
-    """
-    try:
-        photo = open('f.jpg', 'rb')
-        bot.send_photo(message.chat.id, photo)
-        photo.close()
-    except Exception as e:
-        bot.send_message(message.chat.id, f"Произошла ошибка при обработке изображения: {e}")
-
 # Обработчик для остальных типов файлов
 @bot.message_handler(content_types=[ 'sticker', 'location', 'contact', 'document', 'video', 'audio'])
 def handle_other_types(message):
@@ -58,6 +43,21 @@ def handle_other_types(message):
         message (types.Message): Сообщение от пользователя.
     """
     bot.reply_to(message, "Извините, но обработка этого типа файла не поддерживается.")
+
+@bot.message_handler(content_types=['photo'])
+def handle_photo(message):
+    """
+    Обработчик для получения и обработки фотографии.
+
+    Args:
+    - message (types.Message): Объект сообщения пользователя.
+    """
+    try:
+        photo = open('f.jpg', 'rb')
+        bot.send_photo(message.chat.id, photo)
+        photo.close()
+    except Exception as e:
+        bot.send_message(message.chat.id, f"Произошла ошибка при обработке изображения: {e}")
 
 # Обработчик нажатия на кнопку "Нахождение точки рыночного равновесия"
 @bot.message_handler(func=lambda message: message.text == "Нахождение точки рыночного равновесия", content_types=['text'])
@@ -818,47 +818,50 @@ def get_max_production_B2(message, max_production_A1, max_production_B1, max_pro
 
 def plot_kpv(max_production_A_1, max_production_B_1, max_production_A_2, max_production_B_2):
     """
-    Построение кривой общей КПВ за счёт параболы, для приближения к оригинальному графику.
+    Строит график кривой производственных возможностей для двух производителей с использованием точек A, B и C.
 
-    Параметры:
+    Parameters:
     - max_production_A_1 (float): Максимальный объем производства товара A для производителя 1.
     - max_production_B_1 (float): Максимальный объем производства товара B для производителя 1.
     - max_production_A_2 (float): Максимальный объем производства товара A для производителя 2.
     - max_production_B_2 (float): Максимальный объем производства товара B для производителя 2.
 
-    Возвращает:
-    None: Сохраняет график общей кривой предложения в файл 'kpv_plot.png'.
+    Генерирует график кривой производственных возможностей и сохраняет его в файл 'kpv_plot.png'.
     """
-    # Задаем точки
-    x_points = np.array([max_production_A_1, max_production_A_2])
-    y_points = np.array([max_production_B_1, max_production_B_2])
 
-    # Параметры параболы: y = ax^2 + bx + c
-    a = (y_points[1] - y_points[0]) / (x_points[1] - x_points[0])**2
-    b = -2 * a * x_points[0]
-    c = y_points[0] - a * x_points[0]**2 - b * x_points[0]
+    # Создаем списки значений для точек a, b и c
+    point_a = [max_production_A_1 + max_production_A_2, 0]
+    point_b = [max(max_production_A_1, max_production_A_2), max(max_production_B_1, max_production_B_2)]
+    point_c = [0, max_production_B_1 + max_production_B_2]
 
-    # Создаем угловой массив для построения кривой
-    x_values = np.linspace(min(x_points), max(x_points), 100)
+    # Извлечение координат точек
+    a_x, a_y = point_a
+    b_x, b_y = point_b
+    c_x, c_y = point_c
 
-    # Вычисляем координаты точек кривой
-    y_values = a * x_values**2 + b * x_values + c
- 
+    # Построение графика с точками
     plt.figure(figsize=(8, 6))
-    plt.plot(x_values, y_values, label='Общая КПВ')
+    plt.scatter([a_x, b_x, c_x], [a_y, b_y, c_y], color='red', label='Точки')
 
-    plt.axhline(y_points[0], color='black', linestyle='--', linewidth=0.5)
-    plt.axvline(x_points[0], color='black', linestyle='--', linewidth=0.5)
-    # Добавляем сетку
-    plt.grid(True, linestyle='--', alpha=0.7)
- 
-    plt.title('КПВ')
-    plt.xlabel('Товар А')
-    plt.ylabel('Товар Б')
+    # Проводим отрезки через точки
+    plt.plot([b_x, c_x], [b_y, c_y], color='green', linestyle='--', label='Производитель 1')
+    plt.plot([a_x, b_x], [a_y, b_y], color='blue', linestyle='--', label='Производитель 2')
+    
+
+    # Добавление названий точек
+    plt.text(a_x, a_y, 'C', fontsize=12, ha='right', va='bottom')
+    plt.text(b_x, b_y, 'B', fontsize=12, ha='left', va='top')
+    plt.text(c_x, c_y, 'A', fontsize=12, ha='right', va='top')
+
+    # Настройки графика
+    plt.title('Общая КПВ')
+    plt.xlabel('Производство товара Б')
+    plt.ylabel('Производство товара A')
     plt.legend()
-
+    plt.grid(True, linestyle='--', alpha=0.7)
     plt.savefig('kpv_plot.png')
     plt.close()
+
 
 # Запускаем бота
 bot.polling(none_stop=True)
