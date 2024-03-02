@@ -44,6 +44,21 @@ def handle_photo(message):
     except Exception as e:
         bot.send_message(message.chat.id, f"Произошла ошибка при обработке изображения: {e}")
 
+# Обработчик для остальных типов файлов
+@bot.message_handler(content_types=[ 'sticker', 'location', 'contact', 'document', 'video', 'audio'])
+def handle_other_types(message):
+    """
+    Обработчик для остальных типов файлов.
+
+    В данной функции обрабатываются сообщения, содержащие файлы типа 'sticker', 'location', 'contact',
+    'document', 'video' и 'audio'. Она отправляет пользователю сообщение о том, что обработка данного
+    типа файла не поддерживается.
+
+    Args:
+        message (types.Message): Сообщение от пользователя.
+    """
+    bot.reply_to(message, "Извините, но обработка этого типа файла не поддерживается.")
+
 # Обработчик нажатия на кнопку "Нахождение точки рыночного равновесия"
 @bot.message_handler(func=lambda message: message.text == "Нахождение точки рыночного равновесия", content_types=['text'])
 def handle_market_equilibrium_start(message):
