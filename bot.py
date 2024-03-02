@@ -60,7 +60,7 @@ def handle_market_equilibrium_start(message):
     back_button = types.KeyboardButton('Назад')
     back_keyboard.add(back_button)
 
-    bot.send_message(message.chat.id, "Введите коэффициент A:", reply_markup=back_keyboard)
+    bot.send_message(message.chat.id, "Переменные являются коэффициентами в соответствующих функциях спроса и предложения: Qd = A*P - B. Qs =C - D*P. Введите коэффициент A:", reply_markup=back_keyboard)
     bot.register_next_step_handler(message, get_coefficient_A_market_equilibrium)
 
 def get_coefficient_A_market_equilibrium(message):
