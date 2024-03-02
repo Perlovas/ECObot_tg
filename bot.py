@@ -190,19 +190,20 @@ def plot_kpv(max_production_A1, max_production_B1, max_production_A2, max_produc
 # Обработчик нажатия на кнопку "Нахождение точки рыночного равновесия"
 @bot.message_handler(func=lambda message: message.text == "Нахождение точки рыночного равновесия", content_types=['text'])
 def handle_market_equilibrium_start(message):
-    
+    # Создаем объект ReplyKeyboardRemove
     remove_keyboard = types.ReplyKeyboardRemove()
 
 
 
-    # Клавиатура с кнопкой "Назад"
+    # Создаем клавиатуру с кнопкой "Назад"
     back_keyboard = types.ReplyKeyboardMarkup(row_width=1, resize_keyboard=True)
     back_button = types.KeyboardButton('Назад')
     back_keyboard.add(back_button)
 
-
+    bot.send_message(message.chat.id, 'Переменные являются коэффициентами в соответствующих функциях спроса и предложения: Qd = A*P - B. Qs =C - D*P.')
     bot.send_message(message.chat.id, "Введите коэффициент A:", reply_markup=back_keyboard)
     bot.register_next_step_handler(message, get_coefficient_A_market_equilibrium)
+
 
 def get_coefficient_A_market_equilibrium(message):
     try:
