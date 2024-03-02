@@ -97,7 +97,7 @@ def get_coefficient_A_market_equilibrium(message):
         bot.register_next_step_handler(message, get_coefficient_A_market_equilibrium)
 
 def get_coefficient_B_market_equilibrium(message, coefficient_A):
-     """
+    """
     Получение коэффициента B для нахождения точки рыночного равновесия.
 
     Args:
