@@ -1,4 +1,4 @@
-!()[https://sun9-37.userapi.com/impg/5jb3QcYk7sRFuI5acb2MDoLkPot7cVypSTSKYw/vAEBz_Q-GA4.jpg?size=320x394&quality=96&sign=e8c7d0a87316f0e8055bc8a65fe160e6&c_uniq_tag=sMxMSHTlY1FhODh8xA3umRrgixJDbTWRPAOiyLcIURw&type=album]
+!()[https://main.red/m/P0dzQwjP/1080x1097.jpg]
 
 # Руководство по использованию Бота для Экономических Расчетов
 
