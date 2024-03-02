@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from telebot.types import ReplyKeyboardRemove, ReplyKeyboardMarkup, KeyboardButton
 
-bot = telebot.TeleBot('BOTS_TOKEN')
+bot = telebot.TeleBot('6895022639:AAEZXb0NKvL2nhKr_16gL5o63zBodakDm_Y')
 
 @bot.message_handler(commands=['start', 'help'])
 def handle_start(message):
@@ -156,8 +156,7 @@ def get_coefficient_C_market_equilibrium(message, coefficient_A, coefficient_B):
                 return
 
             coefficient_C = float(message.text)
-
-            
+           
             if coefficient_C < 0:
                 bot.send_message(message.chat.id, "Пожалуйста, введите неотрицательное числовое значение.")
                 bot.register_next_step_handler(message, get_coefficient_C_market_equilibrium, coefficient_A, coefficient_B)
