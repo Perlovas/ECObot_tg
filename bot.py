@@ -53,16 +53,13 @@ def handle_market_equilibrium_start(message):
     Args:
     - message (types.Message): Объект сообщения пользователя.
     """
-
-    # Создаем объект ReplyKeyboardRemove
     remove_keyboard = types.ReplyKeyboardRemove()
 
-    # Создаем клавиатуру с кнопкой "Назад"
+    # Клавиатура с кнопкой "Назад"
     back_keyboard = types.ReplyKeyboardMarkup(row_width=1, resize_keyboard=True)
     back_button = types.KeyboardButton('Назад')
     back_keyboard.add(back_button)
 
-    bot.send_message(message.chat.id, 'Переменные являются коэффициентами в соответствующих функциях спроса и предложения: Qd = A*P - B. Qs = C - D*P.')
     bot.send_message(message.chat.id, "Введите коэффициент A:", reply_markup=back_keyboard)
     bot.register_next_step_handler(message, get_coefficient_A_market_equilibrium)
 
@@ -80,8 +77,8 @@ def get_coefficient_A_market_equilibrium(message):
                 return
 
             coefficient_A = float(message.text)
-
-            # Проверка на отрицательное значение
+            
+            
             if coefficient_A < 0:
                 bot.send_message(message.chat.id, "Пожалуйста, введите неотрицательное числовое значение.")
                 bot.register_next_step_handler(message, get_coefficient_A_market_equilibrium)
@@ -112,7 +109,7 @@ def get_coefficient_B_market_equilibrium(message, coefficient_A):
 
             coefficient_B = float(message.text)
 
-            # Проверка на отрицательное значение
+            
             if coefficient_B < 0:
                 bot.send_message(message.chat.id, "Пожалуйста, введите неотрицательное числовое значение.")
                 bot.register_next_step_handler(message, get_coefficient_B_market_equilibrium, coefficient_A)
@@ -127,6 +124,7 @@ def get_coefficient_B_market_equilibrium(message, coefficient_A):
         bot.send_message(message.chat.id, "Пожалуйста, введите числовое значение.")
         bot.register_next_step_handler(message, get_coefficient_B_market_equilibrium, coefficient_A)
 
+
 def get_coefficient_C_market_equilibrium(message, coefficient_A, coefficient_B):
     """
     Получение коэффициента C для нахождения точки рыночного равновесия.
@@ -135,7 +133,7 @@ def get_coefficient_C_market_equilibrium(message, coefficient_A, coefficient_B):
     - message (types.Message): Объект сообщения пользователя.
     - coefficient_A (float): Коэффициент A.
     - coefficient_B (float): Коэффициент B.
-"""
+    """
     try:
         if message.text is not None:
             if message.text == 'Назад':
@@ -144,12 +142,11 @@ def get_coefficient_C_market_equilibrium(message, coefficient_A, coefficient_B):
 
             coefficient_C = float(message.text)
 
-            # Проверка на отрицательное значение
+            
             if coefficient_C < 0:
                 bot.send_message(message.chat.id, "Пожалуйста, введите неотрицательное числовое значение.")
                 bot.register_next_step_handler(message, get_coefficient_C_market_equilibrium, coefficient_A, coefficient_B)
                 return
-
             bot.send_message(message.chat.id, "Введите коэффициент D:")
             bot.register_next_step_handler(message, get_coefficient_D_market_equilibrium, coefficient_A, coefficient_B, coefficient_C)
         else:
@@ -158,6 +155,31 @@ def get_coefficient_C_market_equilibrium(message, coefficient_A, coefficient_B):
     except ValueError:
         bot.send_message(message.chat.id, "Пожалуйста, введите числовое значение.")
         bot.register_next_step_handler(message, get_coefficient_C_market_equilibrium, coefficient_A, coefficient_B)
+
+
+def calculate_market_equilibrium(A, B, C, D):
+    """
+    Расчет равновесной цены и объема на рынке.
+
+    Args:
+    - A (float): Коэффициент A.
+    - B (float): Коэффициент B.
+    - C (float): Коэффициент C.
+    - D (float): Коэффициент D.
+
+    Returns:
+    - Tuple[float, float]: Равновесная цена и объем.
+    """
+
+    # Проверка на деление на ноль
+    if A + D == 0:
+        raise ZeroDivisionError("Деление на ноль невозможно. Знаменатель равен нулю.")
+    
+    # Рассчитываем равновесную цену (P*) и объем (Q*)
+    equilibrium_price = (C + B) / (A + D)
+    equilibrium_quantity = A * equilibrium_price - B
+
+    return equilibrium_price, equilibrium_quantity
 
 def get_coefficient_D_market_equilibrium(message, coefficient_A, coefficient_B, coefficient_C):
     """
@@ -177,18 +199,24 @@ def get_coefficient_D_market_equilibrium(message, coefficient_A, coefficient_B, 
 
             coefficient_D = float(message.text)
 
-            # Проверка на отрицательное значение
+            
             if coefficient_D < 0:
                 bot.send_message(message.chat.id, "Пожалуйста, введите неотрицательное числовое значение.")
                 bot.register_next_step_handler(message, get_coefficient_D_market_equilibrium, coefficient_A, coefficient_B, coefficient_C)
                 return
 
-            # Рассчитываем равновесную цену (P*) и объем (Q*)
-            equilibrium_price, equilibrium_quantity = calculate_market_equilibrium(coefficient_A, coefficient_B, coefficient_C, coefficient_D)
+            try:
+                # Рассчитываем равновесную цену (P*) и объем (Q*)
+                equilibrium_price, equilibrium_quantity = calculate_market_equilibrium(coefficient_A, coefficient_B, coefficient_C, coefficient_D)
 
-            # Отправляем ответ
-            response = f"Рыночное равновесие:\nЦена (P*): {equilibrium_price}\nОбъем (Q*): {equilibrium_quantity}"
-            bot.send_message(message.chat.id, response)
+                # Отправляем ответ
+                response = f"Рыночное равновесие:\nЦена (P*): {equilibrium_price}\nОбъем (Q*): {equilibrium_quantity}"
+                bot.send_message(message.chat.id, response)
+
+            except ZeroDivisionError as e:
+                # Обработка ошибки деления на ноль
+                bot.send_message(message.chat.id, f"Ошибка: {str(e)}")
+                handle_back_button(message)
         else:
             bot.send_message(message.chat.id, "Пожалуйста, введите числовое значение.")
             bot.register_next_step_handler(message, get_coefficient_D_market_equilibrium, coefficient_A, coefficient_B, coefficient_C)
@@ -196,28 +224,6 @@ def get_coefficient_D_market_equilibrium(message, coefficient_A, coefficient_B, 
         bot.send_message(message.chat.id, "Пожалуйста, введите числовое значение.")
         bot.register_next_step_handler(message, get_coefficient_D_market_equilibrium, coefficient_A, coefficient_B, coefficient_C)
 
-def calculate_market_equilibrium(A, B, C, D):
-    """
-    Расчет равновесной цены и объема на рынке.
-
-    Args:
-    - A (float): Коэффициент A.
-    - B (float): Коэффициент B.
-    - C (float): Коэффициент C.
-    - D (float): Коэффициент D.
-
-    Returns:
-    - Tuple[float, float]: Равновесная цена и объем.
-    """
-    # Проверка на деление на ноль
-    if A + D == 0:
-        raise ZeroDivisionError("Деление на ноль невозможно. Знаменатель равен нулю.")
-    
-    # Рассчитываем равновесную цену (P*) и объем (Q*)
-    equilibrium_price = (C + B) / (A + D)
-    equilibrium_quantity = A * equilibrium_price - B
-
-    return equilibrium_price, equilibrium_quantity
 
 # Обработчик нажатия на кнопку "Расчет объема дефицита/излишка"
 @bot.message_handler(func=lambda message: message.text == "Расчет объема дефицита/излишка", content_types=['text'])
