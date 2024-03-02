@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from telebot.types import ReplyKeyboardRemove, ReplyKeyboardMarkup, KeyboardButton
 
-bot = telebot.TeleBot('6895022639:AAEZXb0NKvL2nhKr_16gL5o63zBodakDm_Y')
+bot = telebot.TeleBot('BOTS_TOKEN')
 
 @bot.message_handler(commands=['start', 'help'])
 def handle_start(message):
