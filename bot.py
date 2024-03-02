@@ -677,6 +677,8 @@ def calculate_and_send_response(message, Q, P):
         )
 
         bot.send_message(message.chat.id, response)
+        costs['variable'].clear()
+        costs['fixed'].clear()
     except Exception as e:
         bot.send_message(message.chat.id, "Произошла ошибка при расчете прибыли. Пожалуйста, проверьте введенные данные.")
         print(e)
