@@ -5,7 +5,7 @@ import numpy as np
 from telebot.types import ReplyKeyboardRemove
 from telebot.types import ReplyKeyboardMarkup, KeyboardButton
 
-bot = telebot.TeleBot("BOTS_TOKEN")
+bot = telebot.TeleBot("6895022639:AAEZXb0NKvL2nhKr_16gL5o63zBodakDm_Y")
 
 
 @bot.message_handler(commands=["start", "help"])
