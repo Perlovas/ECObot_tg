@@ -5,7 +5,7 @@ import numpy as np
 from telebot.types import ReplyKeyboardRemove
 from telebot.types import ReplyKeyboardMarkup, KeyboardButton
 
-bot = telebot.TeleBot("6895022639:AAEZXb0NKvL2nhKr_16gL5o63zBodakDm_Y")
+bot = telebot.TeleBot("BOTS_TOKEN")
 
 
 @bot.message_handler(commands=["start", "help"])
@@ -1402,7 +1402,7 @@ def plot_kpv(
         None
     """
 
-    # Создаем списки значений для точек A1, B1 и C1
+    # Создаем списки значений для точек A, B и C
     point_a = [max_production_A_1 + max_production_A_2, 0]
     point_b = [
         max(max_production_A_1, max_production_A_2),
@@ -1426,9 +1426,9 @@ def plot_kpv(
              linestyle="--", label="Производитель 2")
 
     # Добавление названий точек
-    plt.text(a_y, a_x, "A1", fontsize=12, ha="right", va="bottom")
-    plt.text(b_y, b_x, "B1", fontsize=12, ha="left", va="top")
-    plt.text(c_y, c_x, "C1", fontsize=12, ha="right", va="top")
+    plt.text(a_y, a_x, "A", fontsize=12, ha="right", va="bottom")
+    plt.text(b_y, b_x, "B", fontsize=12, ha="left", va="top")
+    plt.text(c_y, c_x, "C", fontsize=12, ha="right", va="top")
 
     # Настройки графика
     plt.title("Общая КПВ")
