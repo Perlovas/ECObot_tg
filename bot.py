@@ -5,7 +5,7 @@ import numpy as np
 from telebot.types import ReplyKeyboardRemove
 from telebot.types import ReplyKeyboardMarkup, KeyboardButton
 
-bot = telebot.TeleBot("6895022639:AAEZXb0NKvL2nhKr_16gL5o63zBodakDm_Y")
+bot = telebot.TeleBot("BOTS_TOKEN")
 
 
 @bot.message_handler(commands=["start", "help"])
@@ -982,10 +982,10 @@ def handle_costs_input(message, Q, P, cost_type):
                     message.chat.id,
                     f"Добавлены {cost_type} издержки: {name}, {cost}."\
                     f" Введите следующие или 'Готово'.",
-                )
+                )#НЕ ВМЕЩАЕТСЯ В <79 СИМВОЛОВ. НЕ БУДЕТ РАБОТАТЬ!!!
                 bot.register_next_step_handler(
                     message, get_fixed_costs, Q, P
-                ) if cost_type == "постоянные" else bot.register_next_step_handler(
+                )if cost_type == "постоянные" else bot.register_next_step_handler(
                     message, get_variable_costs, Q, P
                 )
             else:
@@ -993,10 +993,10 @@ def handle_costs_input(message, Q, P, cost_type):
                     message.chat.id,
                     f"Достигнуто максимальное количество {cost_type}"\
                     f" издержек ({MAX_COSTS}). Введите 'Готово'.",
-                )
+                )#НЕ ВМЕЩАЕТСЯ В <79 СИМВОЛОВ. НЕ БУДЕТ РАБОТАТЬ!!!
                 bot.register_next_step_handler(
                     message, get_fixed_costs, Q, P
-                ) if cost_type == "постоянные" else bot.register_next_step_handler(
+                )if cost_type == "постоянные" else bot.register_next_step_handler(
                     message, get_variable_costs, Q, P
                 )
         else:
@@ -1037,7 +1037,8 @@ def calculate_and_send_response(message, Q, P):
 
         # Источники постоянных издержек
         fixed_costs_sources = ", ".join(
-            [f"{source[0]}, {source[1]} руб." for source in costs["постоянные"]]
+            [f"{source[0]}, "\
+            f"{source[1]} руб." for source in costs["постоянные"]]
         )
 
         # Источники переменных издержек
