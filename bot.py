@@ -1,7 +1,7 @@
-import telebot
-from telebot import types
 import matplotlib.pyplot as plt
 import numpy as np
+import telebot
+from telebot import types
 from telebot.types import ReplyKeyboardRemove
 from telebot.types import ReplyKeyboardMarkup, KeyboardButton
 
@@ -1433,7 +1433,7 @@ def plot_kpv(
     # Настройки графика
     plt.title("Общая КПВ")
     plt.xlabel("Производство товара Б")
-    plt.ylabel("Производство товара A1")
+    plt.ylabel("Производство товара A")
     plt.legend()
     plt.grid(True, linestyle="--", alpha=0.7)
     plt.savefig("kpv_plot.png")
