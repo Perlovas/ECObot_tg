@@ -40,33 +40,6 @@ def handle_start(message):
         reply_markup=keyboard)
 
 
-# Обработчик для остальных типов файлов
-@bot.message_handler(content_types=["sticker",
-                                    "location",
-                                    "contact",
-                                    "document",
-                                    "video",
-                                    "audio"])
-def handle_other_types(message):
-    """
-    Обработчик для остальных типов файлов.
-
-    В данной функции обрабатываются сообщения, содержащие файлы
-    типа 'sticker', 'location', 'contact',
-    'document', 'video' и 'audio'. Она отправляет пользователю сообщение о
-     том, что обработка данного типа файла не поддерживается.
-
-    Args: message (types.Message): Сообщение от пользователя.
-
-    Returns:
-        None
-    """
-
-    bot.reply_to(
-        message,
-        "Извините, но обработка этого типа файла не поддерживается.")
-
-
 @bot.message_handler(content_types=["photo"])
 def handle_photo(message):
     """
@@ -87,6 +60,34 @@ def handle_photo(message):
             message.chat.id, f"Произошла ошибка при обработке изображения:"\
             " {e}"
         )
+
+
+# Обработчик для остальных типов файлов
+@bot.message_handler(content_types=["sticker",
+                                    "location",
+                                    "contact",
+                                    "document",
+                                    "video",
+                                    "audio",
+                                    "photo"])
+def handle_other_types(message):
+    """
+    Обработчик для остальных типов файлов.
+
+    В данной функции обрабатываются сообщения, содержащие файлы
+    типа 'sticker', 'location', 'contact',
+    'document', 'video' и 'audio'. Она отправляет пользователю сообщение о
+     том, что обработка данного типа файла не поддерживается.
+
+    Args: message (types.Message): Сообщение от пользователя.
+
+    Returns:
+        None
+    """
+
+    bot.reply_to(
+        message,
+        "Извините, но обработка этого типа файла не поддерживается.")
 
 
 # Обработчик нажатия на кнопку "Нахождение точки рыночного равновесия"
@@ -283,32 +284,6 @@ def get_coefficient_C_market_equilibrium(
             B)
 
 
-def calculate_market_equilibrium(A, B, C, D):
-    """
-    Расчет равновесной цены и объема на рынке.
-
-    Args:
-    - A (float): Коэффициент A.
-    - B (float): Коэффициент B.
-    - C (float): Коэффициент C.
-    - D (float): Коэффициент D.
-
-    Returns:
-    - Tuple[float, float]: Равновесная цена и объем.
-    """
-
-    # Проверка на деление на ноль
-    if A + D == 0:
-        raise ZeroDivisionError(
-            "Деление на ноль невозможно. Знаменатель равен нулю.")
-
-    # Рассчитываем равновесную цену (P*) и объем (Q*)
-    price = (C + B) / (A + D)
-    value = A * price - B
-
-    return price, value
-
-
 def get_coefficient_D_market_equilibrium(
     message, A, B, C
 ):
@@ -385,6 +360,32 @@ def get_coefficient_D_market_equilibrium(
             B,
             C,
         )
+
+
+def calculate_market_equilibrium(A, B, C, D):
+    """
+    Расчет равновесной цены и объема на рынке.
+
+    Args:
+    - A (float): Коэффициент A.
+    - B (float): Коэффициент B.
+    - C (float): Коэффициент C.
+    - D (float): Коэффициент D.
+
+    Returns:
+    - Tuple[float, float]: Равновесная цена и объем.
+    """
+
+    # Проверка на деление на ноль
+    if A + D == 0:
+        raise ZeroDivisionError(
+            "Деление на ноль невозможно. Знаменатель равен нулю.")
+
+    # Рассчитываем равновесную цену (P*) и объем (Q*)
+    price = (C + B) / (A + D)
+    value = A * price - B
+
+    return price, value
 
 
 # Обработчик нажатия на кнопку "Расчет объема дефицита/излишка"
@@ -791,7 +792,7 @@ def get_firm_production_volume(message):
         None
     """
     try:
-        if message is not None and message.text is not None:
+        if message.text is not None:
             if message.text == "Назад":
                 handle_back_button(message)
                 return
@@ -869,7 +870,7 @@ def get_unit_price(message, Q):
         else:
             bot.send_message(message.chat.id,
                              "Пожалуйста, введите целое числовое значение.")
-            bot.register_next_step_handler(message, get_unit_price)
+            bot.register_next_step_handler(message, get_unit_price, Q)
     except ValueError:
         bot.send_message(
             message.chat.id,
@@ -891,26 +892,35 @@ def get_fixed_costs(message, Q, P):
     Returns:
         None
     """
-    if message.text is not None:
-        if message.text == "Назад":
-            handle_back_button(message)
-            return
-        if message.text.lower() == "готово":
+    try:
+        if message.text is not None:
+            if message.text == "Назад":
+                handle_back_button(message)
+                return
+            if message.text.lower() == "готово":
+                bot.send_message(
+                    message.chat.id,
+                    f"4. Переменные издержки (VC) в рублях. Пожалуйста,"\
+                    f" введите данные в формате 'Название издержки, размер"\
+                    f" издержки'.  (введите 'готово'"\
+                    f" для завершения, максимум {MAX_COSTS} издержек):",
+                )
+                bot.register_next_step_handler(message, get_variable_costs,
+                 Q, P)
+            else:
+                handle_costs_input(message, Q, P, "постоянные")
+        else:
             bot.send_message(
                 message.chat.id,
-                f"4. Переменные издержки (VC) в рублях. Пожалуйста,"\
-                f" введите данные в формате 'Название издержки, размер"\
-                f" издержки'.  (введите 'готово'"\
-                f" для завершения, максимум {MAX_COSTS} издержек):",
-            )
-            bot.register_next_step_handler(message, get_variable_costs, Q, P)
-        else:
-            handle_costs_input(message, Q, P, "постоянные")
-    else:
+                "Пожалуйста, введите числовое значение.")
+            bot.register_next_step_handler(message, get_fixed_costs, Q, P)
+    except ValueError:
         bot.send_message(
             message.chat.id,
-            "Пожалуйста, введите числовое значение.")
-        bot.register_next_step_handler(message, get_fixed_costs)
+            "Некорректный ввод. Введите целое числовое значение для цены за"\
+            " единицу товара.",
+        )
+        bot.register_next_step_handler(message, get_fixed_costs, Q, P)
 
 
 def get_variable_costs(message, Q, P):
@@ -925,19 +935,27 @@ def get_variable_costs(message, Q, P):
     Returns:
         None
     """
-    if message.text is not None:
-        if message.text == "Назад":
-            handle_back_button(message)
-            return
-        if message.text.lower() == "готово":
-            calculate_and_send_response(message, Q, P)
+    try:
+        if message.text is not None:
+            if message.text == "Назад":
+                handle_back_button(message)
+                return
+            if message.text.lower() == "готово":
+                calculate_and_send_response(message, Q, P)
+            else:
+                handle_costs_input(message, Q, P, "переменные")
         else:
-            handle_costs_input(message, Q, P, "переменные")
-    else:
+            bot.send_message(
+                message.chat.id,
+                "Пожалуйста, введите числовое значение.")
+            bot.register_next_step_handler(message, get_variable_costs, Q, P)
+    except ValueError:
         bot.send_message(
             message.chat.id,
-            "Пожалуйста, введите числовое значение.")
-        bot.register_next_step_handler(message, get_variable_costs)
+            "Некорректный ввод. Введите целое числовое значение для цены за"\
+            " единицу товара.",
+        )
+        bot.register_next_step_handler(message, get_variable_costs, Q, P)
 
 
 def handle_costs_input(message, Q, P, cost_type):
