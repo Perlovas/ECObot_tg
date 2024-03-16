@@ -336,7 +336,7 @@ def calculate_market_equilibrium(A, B, C, D):
     """
 
     # Проверка на деление на ноль
-    if D - B == 0:
+    if D + B == 0:
         raise ZeroDivisionError(
             "Деление на ноль невозможно. Знаменатель равен нулю.")
 
