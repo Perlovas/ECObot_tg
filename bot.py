@@ -143,15 +143,7 @@ def get_coefficient_A_market_equilibrium(message):
 
             A = float(message.text)
 
-            if A < 0:
-                bot.send_message(
-                    message.chat.id,
-                    "Пожалуйста, введите неотрицательное числовое значение.",
-                )
-                bot.register_next_step_handler(
-                    message, get_coefficient_A_market_equilibrium
-                )
-                return
+            
 
             bot.send_message(message.chat.id, "Введите коэффициент B:")
             bot.register_next_step_handler(
@@ -190,16 +182,7 @@ def get_coefficient_B_market_equilibrium(message, A):
 
             B = float(message.text)
 
-            if B < 0:
-                bot.send_message(
-                    message.chat.id,
-                    "Пожалуйста, введите неотрицательное числовое значение.",
-                )
-                bot.register_next_step_handler(
-                    message, get_coefficient_B_market_equilibrium, 
-                    A
-                    )
-                return
+            
 
             bot.send_message(message.chat.id, "Введите коэффициент C:")
             bot.register_next_step_handler(
@@ -244,18 +227,7 @@ def get_coefficient_C_market_equilibrium(
 
             C = float(message.text)
 
-            if C < 0:
-                bot.send_message(
-                    message.chat.id,
-                    "Пожалуйста, введите неотрицательное числовое значение.",
-                )
-                bot.register_next_step_handler(
-                    message,
-                    get_coefficient_C_market_equilibrium,
-                    A,
-                    B,
-                )
-                return
+            
             bot.send_message(message.chat.id, "Введите коэффициент D:")
             bot.register_next_step_handler(
                 message,
@@ -306,20 +278,6 @@ def get_coefficient_D_market_equilibrium(
                 return
 
             D = float(message.text)
-
-            if D < 0:
-                bot.send_message(
-                    message.chat.id,
-                    "Пожалуйста, введите неотрицательное числовое значение.",
-                )
-                bot.register_next_step_handler(
-                    message,
-                    get_coefficient_D_market_equilibrium,
-                    A,
-                    B,
-                    C,
-                )
-                return
 
             try:
                 # Рассчитываем равновесную цену (P*) и объем (Q*)
@@ -378,7 +336,7 @@ def calculate_market_equilibrium(A, B, C, D):
     """
 
     # Проверка на деление на ноль
-    if A - D == 0:
+    if D - B == 0:
         raise ZeroDivisionError(
             "Деление на ноль невозможно. Знаменатель равен нулю.")
 
