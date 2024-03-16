@@ -117,7 +117,7 @@ def handle_market_equilibrium_start(message):
     bot.send_message(
         message.chat.id,
         "Переменные являются коэффициентами в соответствующих функциях "\
-        "спроса и предложения: Qd = A*P - B. Qs =C - D*P.",
+        "спроса и предложения: Qd = A - B*P. Qs =C + D*P.",
         reply_markup=back_keyboard)
     bot.send_message(
         message.chat.id, "Введите коэффициент A:")
@@ -332,12 +332,13 @@ def get_coefficient_D_market_equilibrium(
                 цену до сотых.
                 """
                 response = f"Рыночное равновесие:\nЦена (P*): "\
-                f"{round(price, 2)}\nОбъем (Q*): {round(value)}"
+                f"{round(price, 2)}\nОбъем (Q*): {-round(value)}"
                 bot.send_message(message.chat.id, response)
 
             except ZeroDivisionError as e:
                 # Обработка ошибки деления на ноль
-                bot.send_message(message.chat.id, f"Ошибка: {str(e)}")
+                bot.send_message(message.chat.id, "Ошибка: Деление на ноль"\
+                    " невозможно")
                 handle_back_button(message)
         else:
             bot.send_message(message.chat.id,
@@ -377,13 +378,13 @@ def calculate_market_equilibrium(A, B, C, D):
     """
 
     # Проверка на деление на ноль
-    if A + D == 0:
+    if A - D == 0:
         raise ZeroDivisionError(
             "Деление на ноль невозможно. Знаменатель равен нулю.")
 
     # Рассчитываем равновесную цену (P*) и объем (Q*)
-    price = (C + B) / (A + D)
-    value = A * price - B
+    price = (A - C) / (D + B)
+    value = B * price - A
 
     return price, value
 
