@@ -290,7 +290,7 @@ def get_coefficient_D_market_equilibrium(
                 цену до сотых.
                 """
                 response = f"Рыночное равновесие:\nЦена (P*): "\
-                f"{round(price, 2)}\nОбъем (Q*): {-round(value)}"
+                f"{round(price, 2)}\nОбъем (Q*): {round(value)}"
                 bot.send_message(message.chat.id, response)
 
             except ZeroDivisionError as e:
@@ -342,7 +342,7 @@ def calculate_market_equilibrium(A, B, C, D):
 
     # Рассчитываем равновесную цену (P*) и объем (Q*)
     price = (A - C) / (D + B)
-    value = B * price - A
+    value = A - B * price 
 
     return price, value
 
@@ -374,7 +374,7 @@ def handle_deficit_or_surplus_calculation_start(message):
     bot.send_message(
         message.chat.id,
         "Переменные являются коэффициентами в соответствующих функциях"\
-        " спроса и предложения: Qd = A*P - B. Qs = C - D*P.",
+        " спроса и предложения: Qd = A - B*P. Qs = C + D*P.",
         reply_markup=back_keyboard,
     )
     bot.send_message(message.chat.id, "Введите коэффициент A:")
@@ -398,17 +398,6 @@ def get_coefficient_A_deficit_surplus(message):
                 return
 
             A1 = float(message.text)
-
-            # Проверка на отрицательное значение
-            if A1 < 0:
-                bot.send_message(
-                    message.chat.id,
-                    "Пожалуйста, введите неотрицательное числовое значение.",
-                )
-                bot.register_next_step_handler(
-                    message, get_coefficient_A_deficit_surplus
-                )
-                return
 
             bot.send_message(message.chat.id, "Введите коэффициент B:")
             bot.register_next_step_handler(
@@ -445,17 +434,6 @@ def get_coefficient_B_deficit_surplus(message, A1):
                 return
 
             B1 = float(message.text)
-
-            # Проверка на отрицательное значение
-            if B1 < 0:
-                bot.send_message(
-                    message.chat.id,
-                    "Пожалуйста, введите неотрицательное числовое значение.",
-                )
-                bot.register_next_step_handler(
-                    message, get_coefficient_B_deficit_surplus, A1
-                )
-                return
 
             bot.send_message(message.chat.id, "Введите коэффициент C:")
             bot.register_next_step_handler(
@@ -497,20 +475,6 @@ def get_coefficient_C_deficit_surplus(message, A1, B1):
                 return
 
             C1 = float(message.text)
-
-            # Проверка на отрицательное значение
-            if C1 < 0:
-                bot.send_message(
-                    message.chat.id,
-                    "Пожалуйста, введите неотрицательное числовое значение.",
-                )
-                bot.register_next_step_handler(
-                    message,
-                    get_coefficient_C_deficit_surplus,
-                    A1,
-                    B1,
-                )
-                return
 
             bot.send_message(message.chat.id, "Введите коэффициент D:")
             bot.register_next_step_handler(
@@ -561,21 +525,6 @@ def get_coefficient_D_deficit_surplus(
                 return
 
             D1 = float(message.text)
-
-            # Проверка на отрицательное значение
-            if D1 < 0:
-                bot.send_message(
-                    message.chat.id,
-                    "Пожалуйста, введите неотрицательное числовое значение.",
-                )
-                bot.register_next_step_handler(
-                    message,
-                    get_coefficient_D_deficit_surplus,
-                    A1,
-                    B1,
-                    C1,
-                )
-                return
 
             bot.send_message(message.chat.id, "Введите уровень цены (E):")
             bot.register_next_step_handler(
@@ -651,10 +600,10 @@ def get_price_level_deficit_surplus(
                 return
 
             # Рассчитываем спрос и предложение
-            demand = A1 * price_level - B1
-            supply = C1 - D1 * price_level
+            demand = A1 - B1 * price_level
+            supply = C1 + D1 * price_level
 
-            # Рассчитываем объем дефицита/излишка
+            # Рассчитываем разницу спроса и предложений
             deficit_or_surplus = demand - supply
 
             # Определяем ситуацию на рынке
