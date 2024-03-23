@@ -777,12 +777,12 @@ def get_unit_price(message, Q):
             bot.register_next_step_handler(message, get_fixed_costs, Q, P)
         else:
             bot.send_message(message.chat.id,
-                             "Пожалуйста, введите целое числовое значение.")
+                             "Пожалуйста, введите числовое значение.")
             bot.register_next_step_handler(message, get_unit_price, Q)
     except ValueError:
         bot.send_message(
             message.chat.id,
-            "Некорректный ввод. Введите целое числовое значение для цены за"\
+            "Некорректный ввод. Введите числовое значение для цены за"\
             " единицу товара.",
         )
         bot.register_next_step_handler(message, get_unit_price, Q)
@@ -825,8 +825,8 @@ def get_fixed_costs(message, Q, P):
     except ValueError:
         bot.send_message(
             message.chat.id,
-            "Некорректный ввод. Введите целое числовое значение для цены за"\
-            " единицу товара.",
+            "Некорректный ввод. Введите числовое значение для цены за"\
+            " единицу издержки.",
         )
         bot.register_next_step_handler(message, get_fixed_costs, Q, P)
 
@@ -860,8 +860,8 @@ def get_variable_costs(message, Q, P):
     except ValueError:
         bot.send_message(
             message.chat.id,
-            "Некорректный ввод. Введите целое числовое значение для цены за"\
-            " единицу товара.",
+            "Некорректный ввод. Введите числовое значение для цены за"\
+            " единицу и.",
         )
         bot.register_next_step_handler(message, get_variable_costs, Q, P)
 
