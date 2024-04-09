@@ -976,7 +976,7 @@ def calculate_and_send_response(message, Q, P):
         )
 
         # Рассчитываем прибыль
-        profit = Q * (P - total_variable_costs) - total_fixed_costs
+        profit = Q * P - ( total_variable_costs - total_fixed_costs )
 
         response = (
             f"При реализации {Q} единиц продукции по {P} руб. за единицу"\
